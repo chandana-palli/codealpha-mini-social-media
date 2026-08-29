@@ -1,0 +1,158 @@
+{% extends 'social/base.html' %}
+
+{% block content %}
+
+<h1>
+    {{ profile_user.username }}'s Profile
+</h1>
+
+<hr>
+
+<!-- Profile Information -->
+
+<h2>Profile Information</h2>
+
+<p>
+    <strong>Username:</strong>
+    {{ profile_user.username }}
+</p>
+
+<p>
+    <strong>Bio:</strong>
+    {% if profile.bio %}
+        {{ profile.bio }}
+    {% else %}
+        No bio available.
+    {% endif %}
+</p>
+
+<!-- Followers and Following Count -->
+
+<div class="profile-stats">
+
+    <p>
+        👥 <strong>Followers:</strong>
+        {{ profile.followers.count }}
+    </p>
+
+    <p>
+        👤 <strong>Following:</strong>
+        {{ following.count }}
+    </p>
+
+</div>
+
+<!-- Follow / Unfollow Button -->
+
+{% if user.is_authenticated %}
+
+    {% if user != profile_user %}
+
+        {% if is_following %}
+
+            <a href="{% url 'follow_user' profile_user.username %}">
+                <button type="button">
+                    Unfollow
+                </button>
+            </a>
+
+        {% else %}
+
+            <a href="{% url 'follow_user' profile_user.username %}">
+                <button type="button">
+                    Follow
+                </button>
+            </a>
+
+
+        {% endif %}
+
+    {% endif %}
+
+{% endif %}
+
+<hr>
+
+<!-- Followers List -->
+
+<h2>Followers</h2>
+
+{% for follower in followers %}
+
+    <p>
+        👤
+        <a href="{% url 'profile' follower.username %}">
+            {{ follower.username }}
+        </a>
+    </p>
+
+{% empty %}
+
+    <p>
+        No followers yet.
+    </p>
+
+{% endfor %}
+
+<hr>
+
+<!-- Following List -->
+
+<h2>Following</h2>
+
+{% for person in following %}
+
+    <p>
+        👤
+        <a href="{% url 'profile' person.username %}">
+            {{ person.username }}
+        </a>
+    </p>
+
+{% empty %}
+
+    <p>
+        Not following anyone yet.
+    </p>
+
+{% endfor %}
+
+<hr>
+
+<!-- User Posts -->
+
+<h2>Posts</h2>
+
+{% for post in posts %}
+
+    <div class="post">
+
+        <h3>
+            {{ post.user.username }}
+        </h3>
+
+        <p>
+            {{ post.content }}
+        </p>
+
+        <p>
+            ❤️ {{ post.likes.count }} Likes
+        </p>
+
+        <small>
+            {{ post.created_at }}
+        </small>
+
+    </div>
+
+    <hr>
+
+{% empty %}
+
+    <p>
+        No posts yet.
+    </p>
+
+{% endfor %}
+
+{% endblock %}
